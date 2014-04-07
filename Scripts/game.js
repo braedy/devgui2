@@ -19,11 +19,10 @@ var paddle_aDirY = 0, paddle_bDirY = 0, paddleSpeed = 3;
 
 // ball
 var ball;
-var ballDirX = 1, ballDirY = 1, ballSpeed = 2.55;
-var bounceTime =0;
+var ballDirX = 1, ballDirY = 0, ballSpeed = 2.55;
 
 // score
-var score1 = 0, score2 = 0;
+var player_a = 0, player_b = 0;
 var maxScore = 7;
 
 // speed of AI
@@ -34,8 +33,8 @@ function setup(){
 	document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
 
 	// reset scores
-	score1 = 0;
-	score2 = 0;
+	player_a = 0;
+	player_b = 0;
 
 	// set up all objects in scene	
 	createScene();
@@ -194,25 +193,25 @@ function createScene(){
 }
 
 /*====== BALL MOVEMENT ======*/
-function ballPhysics(){
+function ballMovement(){
 	// player scores
 	if (ball.position.x >= fieldWidth/2){
-		score1++;
+		player_a++;
 		// update scoreboard
-		document.getElementById("scores").innerHTML = score1 + "-" + score2;
+		document.getElementById("scores").innerHTML = player_a + "-" + player_b;
 		// reset ball
-		resetBall(1);
-		matchScoreCheck();
+		newRound(1);
+		checkScore();
 	}
 
 	// cpu scores
 	if (ball.position.x <= -fieldWidth/2){
-		score2++;
+		player_b++;
 		// update scoreboard
-		document.getElementById("scores").innerHTML = score1 + "-" + score2;
+		document.getElementById("scores").innerHTML = player_a + "-" + player_b;
 		// reset ball
-		resetBall(2);
-		matchScoreCheck();
+		newRound(2);
+		checkScore();
 	}
 
 	// bounce from wall
@@ -237,7 +236,7 @@ function ballPhysics(){
 }
 
 /*====== MOVE PADDLE =======*/
-function playerPaddleMovement(){
+function playerMovement(){
 	// move right
 	if(Key.isDown(Key.D)){
 		// if paddle is not at edge
@@ -271,7 +270,7 @@ function playerPaddleMovement(){
 }
 
 /*====== OPPONENT AI ======*/
-function opponentPaddleMovement(){
+function opponentAI(){
 	// linear interpolation
 	paddle_bDirY = (ball.position.y - paddle_b.position.y) * difficulty;
 	// limit max paddle speed
@@ -289,24 +288,22 @@ function opponentPaddleMovement(){
 }
 
 /*====== CAMERA ========*/
-function cameraPhysics(){
+function setCamera(){
 	// dynamically move light over ball
 	spotLight.position.x = ball.position.x * 2;
 	spotLight.position.y = ball.position.y * 2;
 
 	// camera behind player's paddle
 	camera.position.x = -fieldWidth/2 + paddleWidth - 100;
-	//camera.position.y = -fieldWidth/5;
 	camera.position.z = paddle_a.position.z + 100 + 0.04;
 
 	// point at opponent 
-	//camera.rotation.x = -0.01 * (ball.position.y) * Math.PI/180;
 	camera.rotation.y = -60 * Math.PI/180;
 	camera.rotation.z = -90 * Math.PI/180;
 }
 
 /*====== COLLISION ======*/
-function paddlePhysics(){
+function collision(){
 	// player logic
 	// if ball is aligned with paddle_a on x plane
 	// remember the position is object center
@@ -328,7 +325,7 @@ function paddlePhysics(){
 	}
 
 	// opponent logic
-	// if ball is aligned with paddle_a on x plane
+	// if ball is aligned with paddle_b on x plane
 	// remember the position is object center
 	// we only check between the front and the middle of the paddle (one-way collision)
 	if (ball.position.x <= paddle_b.position.x + paddleWidth
@@ -350,7 +347,7 @@ function paddlePhysics(){
 
 
 /*====== RESET BALL ======*/
-function resetBall(loser){
+function newRound(loser){
 	// position ball in the centre
 	ball.position.x = 0;
 	ball.position.y = 0;
@@ -364,37 +361,25 @@ function resetBall(loser){
 		ballDirX = -1;
 	}
 	// test Y axis
-	ballDirY = 1; 
+	ballDirY = 0; 
 }
 
 /*====== CHECK SCORE ======*/
-function matchScoreCheck(){
+function checkScore(){
 	// check against max score
-	if(score1 >= maxScore){
+	if(player_a >= maxScore){
 		// stop ball
 		ballSpeed = 0;
 		// update display
 		document.getElementById("scores").innerHTML = "Player wins!";		
 		document.getElementById("winnerBoard").innerHTML = "Refresh to play again";
-		// make paddle bounce up and down
-		bounceTime++;
-		paddle_a.position.z = Math.sin(bounceTime * 0.1) * 10;
-		// enlarge and squish paddle to emulate joy
-		paddle_a.scale.z = 2 + Math.abs(Math.sin(bounceTime * 0.1)) * 10;
-		paddle_a.scale.y = 2 + Math.abs(Math.sin(bounceTime * 0.05)) * 10;
 	}
-	else if(score2 >= maxScore){
+	else if(player_b >= maxScore){
 		// stop ball
 		ballSpeed = 0;
 		// update display
 		document.getElementById("scores").innerHTML = "CPU wins!";		
 		document.getElementById("winnerBoard").innerHTML = "Refresh to play again";
-		// make paddle bounce up and down
-		bounceTime++;
-		paddle_b.position.z = Math.sin(bounceTime * 0.1) * 10;
-		// enlarge and squish paddle to emulate joy
-		paddle_b.scale.z = 2 + Math.abs(Math.sin(bounceTime * 0.1)) * 10;
-		paddle_b.scale.y = 2 + Math.abs(Math.sin(bounceTime * 0.05)) * 10;
 	}
 }
 
@@ -405,11 +390,11 @@ function draw(){
 
 	// loop draw()
 	requestAnimationFrame(draw);
-	ballPhysics();
-	paddlePhysics();
-	cameraPhysics();
-	playerPaddleMovement();
-	opponentPaddleMovement();
+	ballMovement();
+	collision();
+	setCamera();
+	playerMovement();
+	opponentAI();
 
 	//process game logic
 }
