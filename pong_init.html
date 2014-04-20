@@ -2,18 +2,77 @@
 <html>
 	<head>
 		<title>Game</title>
+        <link rel="stylesheet" href="css/foundation.css" />
 	</head>
-	<body onload='setup();')>
+	<body onload='setup();createObstacleScene();')>
+
+        <div class='row'>
+            <div class='large-12 columns'>
+                <h1 id='title'>Pong</h1>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div class='large-12 columns'>
+                <div class='panel'>
+                    <div id='scoreboard'>
+                        <h3>Current Score:</h3>
+                        <h3 id='scores'>0-0</h3>
+                        <p id='winnerBoard'></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class='row'>
+            <div id='gameCanvas' class="large-8 columns"></div>
+            <div id='obstacleBuilder' class='large-4 columns'>
+                <div id='obstacleCanvas'>
+                </div>
+                <p>Length:</p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                    <span class="range-slider-handle"></span>
+                    <span class="range-slider-active-segment"></span>
+                </div>
+                <p>Width:<p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                    <span class="range-slider-handle"></span>
+                    <span class="range-slider-active-segment"></span>
+                </div>
+                <p>Rotation:<p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                    <span class="range-slider-handle"></span>
+                    <span class="range-slider-active-segment"></span>
+                </div>
+        </div>
+        </div>
+
+        <div class='row'>
+            <div class='large-12 columns'>
+                <div class='panel'>
+                <h3>Instructions:</h3>
+                <div class='row'>
+                    <div class='large-6 columns'>
+                        <p>A - move left<br>D - move right</p>
+                    </div>
+                    <div class='large-6 columns'>
+                        <p id='winCondition'></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<script src='./Scripts/three.min.js'></script>
 		<script src='./Scripts/keyboard.js'></script>
 		<script src='./Scripts/game.js'></script>
-		<div id='scoreboard'>
-			<h1 id='scores'>0-0</h1>
-			<h1 id='title'>Pong</h1>
-			<h2 id='winnerBoard'>First to 7 wins!</h2>
-			<div id='gameCanvas'></div>
-			<h3>A - move left
-			<br>D - move right</h3>
-		</div>
+		<script src='./Scripts/form.js'></script>
+
+        <!-- Foundation Scripts -->
+        <script src="js/vendor/modernizr.js"></script>
+        <script src="js/vendor/jquery.js"></script>
+        <script src="js/foundation.min.js"></script>
+        <script>
+          $(document).foundation();
+        </script>
 	</body>
 </html>

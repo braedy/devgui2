@@ -30,7 +30,7 @@ var difficulty = 0.18
 
 function setup(){
 	// set max score HTML
-	document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+	document.getElementById("winCondition").innerHTML = "First to " + maxScore + " wins!";
 
 	// reset scores
 	player_a = 0;
