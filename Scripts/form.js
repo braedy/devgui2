@@ -1,68 +1,30 @@
 function createObstacleScene(){
-	// set the scene size
-	var WIDTH = 240;
-    var HEIGHT = 160;
-	// set some camera attributes
-	var VIEW_ANGLE = 50;
-	var ASPECT = WIDTH / HEIGHT;
-	var NEAR = 0.1;
-	var FAR = 1000;
+    // preview code here
+}
 
-	// create WebGL renderer, camera and scene
-	var scene = new THREE.Scene();
-	var renderer = new THREE.WebGLRenderer();
-	var camera = new THREE.PerspectiveCamera(
-		VIEW_ANGLE,
-		ASPECT,
-		NEAR,
-		FAR);
+function drag(ev) {
+    var length = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
+    var width = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
+    var rotation = parseInt(document.getElementById("rotationSliderOutput").innerHTML, 10);
 
-	// add camera to scene
-	scene.add(camera);
+    var params = {
+                    length:     length,
+                    width:      width,
+                    rotation:   rotation};
 
+    ev.dataTransfer.setData("params", JSON.stringify(params));
+}
 
-	// camera default position
-	camera.position.z = 20;
+function allowDrop(ev){
+    ev.preventDefault();
+}
 
-	// start the renderer
-	renderer.setSize(WIDTH, HEIGHT);
-	renderer.setClearColor(0xFFFFFF);
+function drop(ev){
+    ev.preventDefault();
+    var params = ev.dataTransfer.getData("params");
+    console.log(params);
 
-	// attach the render-supplied DOM element
-	var c = document.getElementById("obstacleCanvas");
-	c.appendChild(renderer.domElement);
+    params = JSON.parse(params);
 
-	var paddleWidth = 10;
-	var paddleHeight = 30;
-	var paddleDepth = 10;
-	var paddleQuality = 1;
-	var paddle_aMaterial = new THREE.MeshLambertMaterial({color:0x007AFF});
-
-	// paddle a
-	var paddle_a = new THREE.Mesh(
-		new THREE.CubeGeometry(
-			paddleWidth,
-			paddleHeight,
-			paddleDepth,
-			paddleQuality,
-			paddleQuality,
-			paddleQuality),
-		paddle_aMaterial);
-	// add to the scene
-	scene.add(paddle_a);
-	paddle_a.receiveShadow = true;
-	paddle_a.castShadow = true;
-
-	// add point light
-	var pointLight = new THREE.PointLight(0xFFFFFF);
-	// set position
-	pointLight.position.x = 0;
-	pointLight.position.y = 0;
-	pointLight.position.z = 1000;
-	pointLight.intensity = 2.9;
-	pointLight.distance = 10000;
-	// add to the scene
-	scene.add(pointLight);
-
-	draw();
+    addCube(params.length, params.width, params.rotation);
 }

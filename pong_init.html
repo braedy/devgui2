@@ -25,38 +25,41 @@
         </div>
 
         <div class='row'>
-            <div id='gameCanvas' class="large-8 columns"></div>
+            <div id='gameCanvas' ondrop='drop(event)' ondragover='allowDrop(event)' class="large-8 columns"></div>
             <div id='obstacleBuilder' class='large-4 columns'>
-                <div id='obstacleCanvas'>
+                <div id='obstacleCanvas' style="background-color: black; height:120px;" draggable="true" ondragstart="drag(event)">
                 </div>
-                <p>Length:</p>
-                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                <br>
+                <p><strong>Length:</strong> <span id="lengthSliderOutput"></span></p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 100; display_selector:#lengthSliderOutput;">
                     <span class="range-slider-handle"></span>
                     <span class="range-slider-active-segment"></span>
                 </div>
-                <p>Width:<p>
-                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                <p><strong>Width:</strong> <span id="widthSliderOutput"></span><p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 100; display_selector:#widthSliderOutput;">
                     <span class="range-slider-handle"></span>
                     <span class="range-slider-active-segment"></span>
                 </div>
-                <p>Rotation:<p>
-                <div class="range-slider" data-slider data-options="start: 0; end: 360;">
+                <p><strong>Rotation:</strong> <span id="rotationSliderOutput"></span><p>
+                <div class="range-slider" data-slider data-options="start: 0; end: 360; display_selector: #rotationSliderOutput">
                     <span class="range-slider-handle"></span>
                     <span class="range-slider-active-segment"></span>
                 </div>
-        </div>
+                <br>
+            </div>
         </div>
 
         <div class='row'>
             <div class='large-12 columns'>
                 <div class='panel'>
-                <h3>Instructions:</h3>
-                <div class='row'>
-                    <div class='large-6 columns'>
-                        <p>A - move left<br>D - move right</p>
-                    </div>
-                    <div class='large-6 columns'>
-                        <p id='winCondition'></p>
+                    <h3>Instructions:</h3>
+                    <div class='row'>
+                        <div class='large-6 columns'>
+                            <p>A - move left<br>D - move right</p>
+                        </div>
+                        <div class='large-6 columns'>
+                            <p id='winCondition'>First to 7 wins!</p>
+                        </div>
                     </div>
                 </div>
             </div>
