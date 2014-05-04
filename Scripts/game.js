@@ -30,7 +30,7 @@ var difficulty = 0.18
 
 function setup(){
 	// set max score HTML
-	document.getElementById("winnerBoard").innerHTML = "First to " + maxScore + " wins!";
+	document.getElementById("winCondition").innerHTML = "First to " + maxScore + " wins!";
 
 	// reset scores
 	player_a = 0;
@@ -397,4 +397,33 @@ function draw(){
 	opponentAI();
 
 	//process game logic
+}
+
+
+/*====== ADD CUBE ======*/
+function addCube(cubeWidth, cubeHeight, cubeRotation) {
+
+	var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xD43001});
+    var cubeDepth = 10;
+
+    cube = new THREE.Mesh(
+    new THREE.CubeGeometry(
+        cubeWidth,
+        cubeHeight,
+        cubeDepth,
+        1,
+        1,
+        1),
+    cubeMaterial);
+	// add to the scene
+	scene.add(cube);
+	cube.receiveShadow = true;
+	cube.castShadow = true;
+
+	// set paddle location
+	cube.position.x = Math.random() * 30;
+	cube.position.y = Math.random() * 30;
+
+	// place on playing surface
+	cube.position.z = cubeDepth;
 }
