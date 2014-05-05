@@ -4,7 +4,7 @@
 		<title>Game</title>
         <link rel="stylesheet" href="css/foundation.css" />
 	</head>
-	<body onload='setup();createObstacleScene();')>
+	<body onload='setup();createObstacleCanvas();')>
 
         <div class='row'>
             <div class='large-12 columns'>
@@ -27,7 +27,7 @@
         <div class='row'>
             <div id='gameCanvas' ondrop='drop(event)' ondragover='allowDrop(event)' class="large-8 columns"></div>
             <div id='obstacleBuilder' class='large-4 columns'>
-                <div id='obstacleCanvas' style="background-color: black; height:120px;" draggable="true" ondragstart="drag(event)">
+                <div id='obstacleCanvas' style="background-color: black; height:150px; width: 300px;" draggable="true" ondragstart="drag(event)">
                 </div>
                 <br>
                 <p><strong>Length:</strong> <span id="lengthSliderOutput"></span></p>
@@ -65,11 +65,6 @@
             </div>
         </div>
 
-		<script src='./Scripts/three.min.js'></script>
-		<script src='./Scripts/keyboard.js'></script>
-		<script src='./Scripts/game.js'></script>
-		<script src='./Scripts/form.js'></script>
-
         <!-- Foundation Scripts -->
         <script src="js/vendor/modernizr.js"></script>
         <script src="js/vendor/jquery.js"></script>
@@ -77,5 +72,11 @@
         <script>
           $(document).foundation();
         </script>
+
+		<script src='./Scripts/three.min.js'></script>
+		<script src='./Scripts/keyboard.js'></script>
+		<script src='./Scripts/game.js'></script>
+		<script src='./Scripts/form.js'></script>
+
 	</body>
 </html>
