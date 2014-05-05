@@ -25,12 +25,14 @@ function createObstacleCanvas(){
                                     NEAR,
                                     FAR);
 
-    obstacleCanvasCamera.position.z = 150;
+    obstacleCanvasCamera.position.z = 100;
 
     obstacleCanvasScene = new THREE.Scene();
 
     // start the renderer
     obstacleCanvasRenderer.setSize(WIDTH, HEIGHT);
+    obstacleCanvasRenderer.setClearColor(0xFFFFFF);
+
 
     // attach the render-supplied DOM element
     container.append(obstacleCanvasRenderer.domElement);
@@ -43,6 +45,9 @@ function createObstacleCanvas(){
     previewCube = new THREE.Mesh( new THREE.CubeGeometry(1, 1, 10, 1, 1, 1),cubeMaterial);
     previewCube.scale.x = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
     previewCube.scale.y = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
+    previewCube.receiveShadow = true;
+    previewCube.castShadow = true;
+    previewCube.rotation.x = - 1;
 
 
     // add the sphere to the obstacleCanvasScene
