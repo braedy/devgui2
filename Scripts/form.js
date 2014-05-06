@@ -1,3 +1,76 @@
+var obstacleCanvasRenderer;
+var obstacleCanvasCamera;
+var obstacleCanvasScene;
+var previewCube;
+
+function createObstacleCanvas(){
+    // set the scene size
+    var WIDTH = 300,
+        HEIGHT = 150;
+
+    // set some camera attributes
+    var VIEW_ANGLE = 45,
+        ASPECT = WIDTH / HEIGHT,
+        NEAR = 0.1,
+        FAR = 10000;
+
+    // get the DOM element to attach to
+    // - assume we've got jQuery to hand
+    var container = $('#obstacleCanvas');
+
+    // create a WebGL renderer, camera and a scene
+    obstacleCanvasRenderer = new THREE.WebGLRenderer();
+    obstacleCanvasCamera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
+                                    ASPECT,
+                                    NEAR,
+                                    FAR);
+
+    obstacleCanvasCamera.position.z = 100;
+
+    obstacleCanvasScene = new THREE.Scene();
+
+    // start the renderer
+    obstacleCanvasRenderer.setSize(WIDTH, HEIGHT);
+    obstacleCanvasRenderer.setClearColor(0xFFFFFF);
+
+
+    // attach the render-supplied DOM element
+    container.append(obstacleCanvasRenderer.domElement);
+
+    // create the sphere's material
+    var cubeMaterial    = new THREE.MeshLambertMaterial({color: 0xCC0000});
+
+    // Create an almost unit box ((1,1,10) dimensions) since Three.JS only allows to scale the cube after creation
+    // I couldn't find a solution to set the width/height values explicitly and rendering it again.
+    previewCube = new THREE.Mesh( new THREE.CubeGeometry(1, 1, 10, 1, 1, 1),cubeMaterial);
+    previewCube.scale.x = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
+    previewCube.scale.y = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
+    previewCube.receiveShadow = true;
+    previewCube.castShadow = true;
+    previewCube.rotation.x = - 1;
+
+
+    // add the sphere to the obstacleCanvasScene
+    obstacleCanvasScene.add(previewCube);
+
+    // and the obstacleCanvasCamera
+    obstacleCanvasScene.add(obstacleCanvasCamera);
+
+    // create a point light
+    var pointLight = new THREE.PointLight( 0xFFFFFF );
+
+    // set its position
+    pointLight.position.x = 10;
+    pointLight.position.y = 50;
+    pointLight.position.z = 130;
+
+    // add to the obstacleCanvasScene
+    obstacleCanvasScene.add(pointLight);
+
+    // draw!
+    obstacleCanvasRenderer.render(obstacleCanvasScene, obstacleCanvasCamera);
+}
+
 function drag(ev) {
     var length = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
     var width = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
@@ -18,72 +91,26 @@ function allowDrop(ev){
 function drop(ev){
     ev.preventDefault();
     var params = ev.dataTransfer.getData("params");
-    console.log(params);
 
     params = JSON.parse(params);
 
     addCube(params.length, params.width, params.rotation);
 }
 
-function createObstacleScene(){
-    // preview code here
-    var length = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
-    var width = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
-    var rotation = parseInt(document.getElementById("rotationSliderOutput").innerHTML, 10);
+$(document).foundation({
+  slider: {
+    on_change: function(){
 
-      // set the scene size
-      var oWIDTH = 320, oHEIGHT = 140;
-      // set some camera attributes
-      var oVIEW_ANGLE = 50,
-        oASPECT = oWIDTH / oHEIGHT,
-        oNEAR = 0.1,
-        oFAR = 300;
+      // scale the cube to meet the new sizes
+      previewCube.scale.x = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
+      previewCube.scale.y = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
 
-      // create WebGL renderer, camera and scene
-      oscene = new THREE.Scene();
-      orenderer = new THREE.WebGLRenderer();
-      ocamera = new THREE.PerspectiveCamera(
-        oVIEW_ANGLE,
-        oASPECT,
-        oNEAR,
-        oFAR);
+      // rotate the cube
+      var radians = parseInt(document.getElementById("rotationSliderOutput").innerHTML, 10) * Math.PI / 180;
+      previewCube.rotation.z = radians;
 
-      // add camera to scene
-      scene.add(ocamera);
-
-
-      // camera default position
-      ocamera.position.z = 320;
-
-      // start the renderer
-      orenderer.setSize(oWIDTH, oHEIGHT);
-      orenderer.setClearColor(0xFFFFFF);
-
-      // attach the render-supplied DOM element (obstacle canvas)
-      var p = document.getElementById("obstacleCanvas");
-      p.appendChild(orenderer.domElement);
-
-      // create cube
-      var geometry = new THREE.BoxGeometry(length,25,width);
-      var material = new THREE.MeshBasicMaterial({color: 0xD43001});
-      var cube = new THREE.Mesh(geometry, material);
-      cube.receiveShadow = true;
-      cube.castShadow = true;
-      cube.rotation.x = 1;
-      oscene.add(cube);
-
-      ocamera.position.z = 100;
-
-      odraw();
-}
-
-function odraw(){
-  // draw scene
-  orenderer.render(oscene, ocamera);
-
-  // loop draw()
-  requestAnimationFrame(odraw);
-
-  // TODO: write updates for cube dimensions
-
-}
+      // render the new preview!
+      obstacleCanvasRenderer.render(obstacleCanvasScene, obstacleCanvasCamera);
+    }
+  }
+});

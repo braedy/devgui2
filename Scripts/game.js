@@ -403,7 +403,9 @@ function draw(){
 /*====== ADD CUBE ======*/
 function addCube(cubeWidth, cubeHeight, cubeRotation) {
 
-	var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xD43001});
+    // adds a cube (in a random position) to the playing field
+
+    var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000, transparent: true, opacity: 0.5});
     var cubeDepth = 10;
 
     cube = new THREE.Mesh(
@@ -415,15 +417,19 @@ function addCube(cubeWidth, cubeHeight, cubeRotation) {
         1,
         1),
     cubeMaterial);
-	// add to the scene
-	scene.add(cube);
-	cube.receiveShadow = true;
-	cube.castShadow = true;
 
-	// set paddle location
-	cube.position.x = Math.random() * 30;
-	cube.position.y = Math.random() * 30;
+    // add to the scene
+    scene.add(cube);
 
-	// place on playing surface
-	cube.position.z = cubeDepth;
+    cube.receiveShadow = true;
+    cube.castShadow = true;
+
+    var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    cube.position.x = plusOrMinus * Math.random() * (fieldWidth - cubeWidth)/2;
+
+    plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    cube.position.y = plusOrMinus * Math.random() * (fieldHeight - cubeHeight)/2;
+
+    // place on playing surface
+    cube.position.z = cubeDepth;
 }
