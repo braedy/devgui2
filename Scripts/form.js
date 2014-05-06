@@ -74,7 +74,7 @@ function createObstacleCanvas(){
 function drag(ev) {
     var length = parseInt(document.getElementById("lengthSliderOutput").innerHTML, 10);
     var width = parseInt(document.getElementById("widthSliderOutput").innerHTML, 10);
-    var rotation = parseInt(document.getElementById("rotationSliderOutput").innerHTML, 10);
+    var rotation = parseInt(document.getElementById("rotationSliderOutput").innerHTML, 10) * Math.PI / 180;
 
     var params = {
                     length:     length,
