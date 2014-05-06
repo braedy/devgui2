@@ -45,9 +45,9 @@ initScene = function() {
 	    planeHeight = fieldHeight,
 	    planeQuality = 10;
 
-var paddle_friction = 0;
-var paddle_restitution = 1.0;
-var plane_fric = 0;
+var paddle_friction = 300;
+var paddle_restitution = 0.9;
+var plane_fric = 300;
 var plane_rest = 0;
     // Materials
     /*NOTE : the parameter after the color sets the material friction
@@ -84,6 +84,11 @@ var plane_rest = 0;
     //Add collision detection
     bound_right.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
     console.log("RIGHT BOUND HIT");
+    if(other_object._physijs.id == 4) {
+      var ball_x_vel = other_object.getLinearVelocity().x;
+      var ball_z_vel = other_object.getLinearVelocity().z;
+      other_object.applyCentralForce(new THREE.Vector3(-ball_x_vel*4e4, 0, 0));
+    }
     });
 
     scene.add(bound_right);
@@ -98,7 +103,11 @@ var plane_rest = 0;
 
     //Add collision detection
     bound_left.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-    console.log("LEFT BOUND HIT");
+    if(other_object._physijs.id == 4) {
+      var ball_x_vel = other_object.getLinearVelocity().x;
+      var ball_z_vel = other_object.getLinearVelocity().z;
+      other_object.applyCentralForce(new THREE.Vector3(-ball_x_vel*4e4, 0, 0));
+    }
     });
 
     scene.add(bound_left);
@@ -140,7 +149,7 @@ var plane_rest = 0;
 
   ball.setAngularFactor(new THREE.Vector3( 0, 0, 0 )); // don't rotate
   ball.setLinearFactor(new THREE.Vector3( 1, 0, 1 )); // only move on X and Z axis
-
+  //ball.setCcdMotionThreshold(5);
     	/*====== PADDLES =======*/
   	paddleWidth = 30;
   	paddleHeight = 10;
@@ -173,7 +182,16 @@ var plane_rest = 0;
     paddle_a.setLinearFactor(new THREE.Vector3( 1, 0, 0 )); // only move on X and Y axis
 
     paddle_a.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+    var paddle_x_vel = paddle_a.getLinearVelocity().x;
+    var ball_x_vel = other_object.getLinearVelocity().x;
+    if(Math.abs(paddle_x_vel) > Math.abs(ball_x_vel)){
+      other_object.applyCentralForce(new THREE.Vector3(paddle_a.getLinearVelocity().x *1e5, 0, 0));
+    }else if(Math.abs(paddle_x_vel) < Math.abs(ball_x_vel)) {
+      other_object.applyCentralForce(new THREE.Vector3(ball.getLinearVelocity().x *1e5, 0, 0));
+    }
     console.log("PAD A HIT :"+other_object._physijs.id);
+    console.log(paddle_x_vel);
+    console.log(ball_x_vel);
     });
     // paddle b
   	paddle_b = new Physijs.BoxMesh(
@@ -201,8 +219,11 @@ var plane_rest = 0;
     paddle_b.setLinearFactor(new THREE.Vector3( 1, 0, 0 )); // only move on X and Y axis
 
     paddle_b.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-    //if(other_object._physijs.id == 4)
-      //other_object.applyCentralForce(new THREE.Vector3(0, 0, -1e8));
+    if(other_object._physijs.id == 4) {
+      var paddle_x_vel = paddle_b.getLinearVelocity().x;
+      var ball_x_vel = other_object.getLinearVelocity().x;
+      other_object.applyCentralForce(new THREE.Vector3(ball.getLinearVelocity().x *1e5, 0, 0));
+    }
     });
 
     // ambient light
@@ -235,12 +256,36 @@ function playerMovement(){
 	// move right
   if(Key.isDown(Key.D)){
 			//paddle_aDirX = paddleSpeed * 0.5;
-      paddle_a.applyCentralForce(new THREE.Vector3(1e6, 0, 0));
+      paddle_a.applyCentralImpulse(new THREE.Vector3(4e4, 0, 0));
 	}
 	// move left
 	else if(Key.isDown(Key.A)){
 			//paddle_aDirX = -paddleSpeed * 0.5;
-      paddle_a.applyCentralForce(new THREE.Vector3(-1e6, 0, 0));
+      paddle_a.applyCentralImpulse(new THREE.Vector3(-4e4, 0, 0));
+}else{
+  var linear_amount = 0.9;
+var angular_amount = 0;
+paddle_a.setDamping( linear_amount, angular_amount );
+}
+}
+
+/*====== OPPONENT AI ======*/
+function opponentAI(){
+	// linear interpolation
+  paddle_b.__dirtyPosition = true;
+
+	paddle_bDirY = (ball.position.x - paddle_b.position.x) * difficulty;
+  // limit max paddle speed
+	if(Math.abs(paddle_bDirY) <= paddleSpeed){
+    paddle_b.position.x += paddle_bDirY;
+	}
+	else{
+		if(paddle_bDirY > paddleSpeed){
+			paddle_b.position.x += paddleSpeed;
+		}
+		else if(paddle_bDirY < -paddleSpeed){
+			paddle_b.position.x -= paddleSpeed;
+		}
 	}
 }
 
@@ -298,6 +343,7 @@ render = function() {
     renderer.render( scene, camera); // render the scene
     //ballMovement();
     playerMovement();
+    opponentAI();
     requestAnimationFrame( render );
 };
 
