@@ -34,6 +34,7 @@ initScene = function() {
         1000
     );
     camera.position.set( 0, 360, 450 );
+    //camera.position.set(200,500,0);
     //camera.position.set(360, 0, 0);
     camera.lookAt( scene.position );
     scene.add( camera );
@@ -44,10 +45,10 @@ initScene = function() {
 	    planeHeight = fieldHeight,
 	    planeQuality = 10;
 
-var paddle_friction = 0.2; // high friction
-var paddle_restitution = 1.0; // low restitution
-var plane_fric = .9;
-var plane_rest = .3;
+var paddle_friction = 0;
+var paddle_restitution = 1.0;
+var plane_fric = 0;
+var plane_rest = 0;
     // Materials
     /*NOTE : the parameter after the color sets the material friction
             and the other parameter sets the restitution.*/
@@ -59,7 +60,7 @@ var plane_rest = .3;
       new THREE.MeshLambertMaterial({color:0x007AFF}), paddle_friction, paddle_restitution);
 
     var paddle_bMaterial = Physijs.createMaterial(
-    new THREE.MeshBasicMaterial({ color: 0xFF5E3A }),paddle_friction ,paddle_restitution );
+    new THREE.MeshBasicMaterial({color: 0xFF5E3A}), paddle_friction,  paddle_restitution);
 
 // plane
 		plane = new Physijs.BoxMesh(
@@ -105,15 +106,28 @@ var plane_rest = .3;
 /*====== BALL ======*/
 	var radius = 5, segments = 6, rings = 6;
 
+  var ball_restitution = 1.0;
+  var ball_friction = 0;
 	// create the sphere textures
-	var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xD43001});
-
+	var sphereMaterial = Physijs.createMaterial(
+    new THREE.MeshLambertMaterial({color: 0xD43001}), 0, ball_restitution);
+/*
 	// create ball with sphere geometry
 	ball = new Physijs.SphereMesh(
 		new THREE.SphereGeometry(
 			radius, segments, rings), sphereMaterial);
+*/
+  ball = new Physijs.BoxMesh(
+    new THREE.CubeGeometry(
+      10,
+      10,
+      10,
+      paddleQuality,
+      paddleQuality,
+      paddleQuality),
+    sphereMaterial);
 
-	// place ball in centre
+  // place ball in centre
 	ball.position.x = 0;
 	ball.position.y = radius;
 
@@ -124,7 +138,8 @@ var plane_rest = .3;
   // add to scene
   scene.add(ball);
 
-  ball.setLinearFactor(new THREE.Vector3( 1, 0, 1 )); // only move on X and Y axis
+  ball.setAngularFactor(new THREE.Vector3( 0, 0, 0 )); // don't rotate
+  ball.setLinearFactor(new THREE.Vector3( 1, 0, 1 )); // only move on X and Z axis
 
     	/*====== PADDLES =======*/
   	paddleWidth = 30;
@@ -141,7 +156,7 @@ var plane_rest = .3;
   			paddleQuality,
   			paddleQuality,
   			paddleQuality),
-  		paddle_aMaterial);
+  		paddle_bMaterial);
 
     // set paddle_a location
 	  paddle_a.position.x = 0;
@@ -158,10 +173,7 @@ var plane_rest = .3;
     paddle_a.setLinearFactor(new THREE.Vector3( 1, 0, 0 )); // only move on X and Y axis
 
     paddle_a.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-    if(other_object._physijs.id == 4)
-      console.log("BALL HIT");
-      console.log("cpu ball hit"+relative_velocity._physijs.id);
-      other_object.applyCentralForce(new THREE.Vector3(0, 0, 1e7));
+    console.log("PAD A HIT :"+other_object._physijs.id);
     });
     // paddle b
   	paddle_b = new Physijs.BoxMesh(
@@ -172,12 +184,12 @@ var plane_rest = .3;
   			paddleQuality,
   			paddleQuality,
   			paddleQuality),
-  		paddle_bMaterial);
+  		paddle_aMaterial);
 
     // set paddle location
     paddle_b.position.x = 0;
     paddle_b.position.y = paddleHeight/2;
-    paddle_b.position.z = -fieldHeight+paddleHeight;
+    paddle_b.position.z = -fieldHeight+paddleHeight+5;
 
   	// add to the scene
   	scene.add(paddle_b);
@@ -189,9 +201,8 @@ var plane_rest = .3;
     paddle_b.setLinearFactor(new THREE.Vector3( 1, 0, 0 )); // only move on X and Y axis
 
     paddle_b.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-    if(other_object._physijs.id == 4)
-      console.log("cpu ball hit"+relative_velocity);
-      other_object.applyCentralForce(new THREE.Vector3(0, 0, 1e7));
+    //if(other_object._physijs.id == 4)
+      //other_object.applyCentralForce(new THREE.Vector3(0, 0, -1e8));
     });
 
     // ambient light
@@ -214,7 +225,7 @@ var plane_rest = .3;
 		dir_light.shadowDarkness = .5;
 		scene.add( dir_light );
 
-    ball.applyCentralForce(new THREE.Vector3(0, 0, 1e7));
+    ball.applyCentralForce(new THREE.Vector3(0, 0, -1e7));
 
     requestAnimationFrame( render );
 };
@@ -282,6 +293,7 @@ function ballMovement(){
 
 
 render = function() {
+    //scene.setGravity(new THREE.Vector3( 0, -50, 0 )); // set gravity
     scene.simulate(); // run physics
     renderer.render( scene, camera); // render the scene
     //ballMovement();
