@@ -89,12 +89,83 @@ function allowDrop(ev){
 }
 
 function drop(ev){
+    // to capture drop
     ev.preventDefault();
+
+    // get parameters from the draged canvas
     var params = ev.dataTransfer.getData("params");
-
     params = JSON.parse(params);
+    // add a new box to the scene
+    setLastCube(params.length, params.width, params.rotation);
+    addCube(lastCube);
 
-    addCube(params.length, params.width, params.rotation);
+    // Set up an alert box to inform the player
+    var alertBox = document.getElementById("alert");
+    alertBox.innerHTML = "Added a new box to the scene! Do you want to <a id='undo' href='#'>undo this action</a>?";
+    alertBox.style.display = 'block';
+
+    // Add the undo functionality to the link inside the alert
+    $('#undo').click(function(){
+        undo();
+        return false;
+    });
+}
+
+function undo() {
+    removeCube(lastCube);
+
+    // Set up an alert box to inform the player
+    var alertBox = document.getElementById("alert");
+    alertBox.innerHTML = "Removed the last box from the scene. If that was a mistake, you can <a id='redo' href='#'>redo it here</a>."
+
+    $('#redo').click(function(){
+        redo();
+        return false;
+    });
+}
+
+function redo() {
+    addCube(lastCube);
+
+    // Set up an alert box to inform the player
+    var alertBox = document.getElementById("alert");
+    alertBox.innerHTML = "You re-added the cube. Is this fun? You can always <a id='undo' href='#'>undo this action</a>.";
+
+    $('#undo').click(function(){
+        undo();
+        return false;
+    });
+}
+
+var lastCube;
+function setLastCube(cubeWidth, cubeHeight, cubeRotation) {
+
+    var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000, transparent: true, opacity: 0.5});
+    var cubeDepth = 10;
+
+    // create the cube
+    lastCube = new THREE.Mesh(
+    new THREE.CubeGeometry(
+        cubeWidth,
+        cubeHeight,
+        cubeDepth,
+        1,
+        1,
+        1),
+    cubeMaterial);
+
+    // rotate it
+    lastCube.rotation.z = cubeRotation;
+
+    lastCube.receiveShadow = true;
+    lastCube.castShadow = true;
+
+    // place the cube somewhere random
+    var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    lastCube.position.x = plusOrMinus * Math.random() * (fieldWidth - cubeWidth)/2;
+    plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    lastCube.position.y = plusOrMinus * Math.random() * (fieldHeight - cubeHeight)/2;
+    lastCube.position.z = cubeDepth;
 }
 
 $(document).foundation({
