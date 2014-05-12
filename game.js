@@ -3,7 +3,6 @@ var initScene, render, renderer, scene, camera, pointLight, spotLight;
 
 // field
 var fieldWidth = 400, fieldHeight = 200;
-var boundwidth = fieldWidth, boundHeight = 200;
 // paddle
 var paddle_a, paddle_b;
 var paddleWidth, paddleHeight, paddleDepth, paddleQuality;
@@ -20,7 +19,12 @@ var maxScore = 7;
 // speed of AI
 var difficulty = 0.18
 
+//slow down effect on the ball
+var linear_amount = 0.9;
+var angular_amount = 0;
+
 initScene = function() {
+
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.getElementById( 'viewport' ).appendChild( renderer.domElement );
@@ -149,9 +153,10 @@ var plane_rest = 0;
 
   ball.setAngularFactor(new THREE.Vector3( 0, 0, 0 )); // don't rotate
   ball.setLinearFactor(new THREE.Vector3( 1, 0, 1 )); // only move on X and Z axis
+  ball.setCcdMotionThreshold(10);
   //ball.setCcdMotionThreshold(5);
     	/*====== PADDLES =======*/
-  	paddleWidth = 30;
+  	paddleWidth = 50;
   	paddleHeight = 10;
   	paddleDepth = 10;
   	paddleQuality = 1;
@@ -263,8 +268,6 @@ function playerMovement(){
 			//paddle_aDirX = -paddleSpeed * 0.5;
       paddle_a.applyCentralImpulse(new THREE.Vector3(-4e4, 0, 0));
 }else{
-  var linear_amount = 0.9;
-var angular_amount = 0;
 paddle_a.setDamping( linear_amount, angular_amount );
 }
 }
@@ -291,21 +294,22 @@ function opponentAI(){
 
 /*====== RESET BALL ======*/
 function newRound(loser){
-	// position ball in the centre
-	ball.position.x = 0;
-	ball.position.y = 0;
 
+  console.log("ball mass : "+ball.mass);
   // Change the object's position
-    ball.position.set( 0, 0, 0 );
-    ball.__dirtyPosition = true;
-
-	// if player won last point, sent ball to player
+  ball.mass = 0;
+  ball.position.set(0,5,0);
+  ball.__dirtyPosition = true;
+  ball.mass = 1000;
+  // if player won last point, sent ball to player
 	if(loser != 1){
-    ball.applyCentralForce(new THREE.Vector3(-1e5, 0, 0));
-	}
+    console.log("HERE")
+    ball.setLinearVelocity(new THREE.Vector3(0,0,-170));
+  }
 	// if player lost the last point, send ball to opponent
 	else{
-    paddle_a.applyCentralForce(new THREE.Vector3(1e5, 0, 0));
+    console.log("OR HERE")
+    ball.setLinearVelocity(new THREE.Vector3(0,0,170));
 	}
 	// test Y axis
 	ballDirY = 0;
@@ -314,37 +318,44 @@ function newRound(loser){
 /*====== BALL MOVEMENT ======*/
 function ballMovement(){
 	// player scores
-  if (ball.position.x >= fieldWidth/2){
+  if (ball.position.z >= fieldWidth/2){
 		player_a++;
-    console.log("player scores!");
+    console.log("CPU scores!");
 		// update scoreboard
 		//document.getElementById("scores").innerHTML = player_a + "-" + player_b;
 		// reset ball
 		newRound(1);
 		//checkScore();
+    return 1;
 	}
 
 	// cpu scores
-	if (ball.position.x <= -fieldWidth/2){
+	if (ball.position.z <= -fieldWidth/2){
 		player_b++;
-    console.log("CPU scores!");
+    console.log("player scores!");
 		// update scoreboard
 		//document.getElementById("scores").innerHTML = player_a + "-" + player_b;
 		// reset ball
 		newRound(2);
 		//checkScore();
+    return 1;
 	}
 }
 
+//var start = false
 
 render = function() {
-    //scene.setGravity(new THREE.Vector3( 0, -50, 0 )); // set gravity
+//  if(start) {
     scene.simulate(); // run physics
     renderer.render( scene, camera); // render the scene
-    //ballMovement();
     playerMovement();
+    ballMovement();
     opponentAI();
     requestAnimationFrame( render );
+//  }else {
+//      renderer.render( scene, camera); // render the scene
+
+//  }
 };
 
 window.onload = initScene;
