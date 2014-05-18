@@ -32,8 +32,8 @@
 
             <div id='gameCanvas' ondrop='drop(event)' ondragover='allowDrop(event)' class="large-8 columns"></div>
             <div id='obstacleBuilder' class='large-4 columns'>
-                <div id='obstacleCanvas' style="height:150px; width: 300px;" draggable="true" ondragstart="drag(event)"><span data-tooltip class="has-tip" title="Drag this box into the game to add a new copy in the scene at a random position!">?</span></div>
-                <br>
+                <span data-tooltip class="has-tip" title="Drag this box into the game to add a new copy in the scene at a random position!">?</span>
+                <div id='obstacleCanvas' style="height:150px; width: 300px;" draggable="true" ondragstart="drag(event)"></div>
                 <p><strong>Length:</strong> <span id="lengthSliderOutput"></span></p>
                 <div class="range-slider" data-slider data-options="start: 20; end: 80; display_selector:#lengthSliderOutput;">
                     <span class="range-slider-handle"></span>

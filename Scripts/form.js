@@ -19,7 +19,7 @@ function createObstacleCanvas(){
     var container = $('#obstacleCanvas');
 
     // create a WebGL renderer, camera and a scene
-    obstacleCanvasRenderer = new THREE.WebGLRenderer();
+    obstacleCanvasRenderer = new THREE.WebGLRenderer( { alpha: true } );
     obstacleCanvasCamera = new THREE.PerspectiveCamera(  VIEW_ANGLE,
                                     ASPECT,
                                     NEAR,
@@ -31,8 +31,6 @@ function createObstacleCanvas(){
 
     // start the renderer
     obstacleCanvasRenderer.setSize(WIDTH, HEIGHT);
-    obstacleCanvasRenderer.setClearColor(0xFFFFFF);
-
 
     // attach the render-supplied DOM element
     container.append(obstacleCanvasRenderer.domElement);
