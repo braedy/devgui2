@@ -4,7 +4,7 @@
 		<title>Game</title>
         <link rel="stylesheet" href="css/foundation.css" />
 	</head>
-	<body onload='setup();createObstacleCanvas();')>
+	<body onload='initScene();createObstacleCanvas();')>
 
         <div class='row'>
             <div class='large-12 columns'>
@@ -29,7 +29,6 @@
             <div id='alert' data-alert class="alert-box info round"style='display:none;'>
               Alert text.
             </div>
-
             <div id='gameCanvas' ondrop='drop(event)' ondragover='allowDrop(event)' class="large-8 columns"></div>
             <div id='obstacleBuilder' class='large-4 columns'>
                 <span data-tooltip class="has-tip" title="Drag this box into the game to add a new copy in the scene at a random position!">?</span>
@@ -63,6 +62,7 @@
                         </div>
                         <div class='large-6 columns'>
                             <p id='winCondition'>First to 7 wins!</p>
+                            <p id='info'></p>
                         </div>
                     </div>
                 </div>
@@ -79,8 +79,9 @@
 
 		<script src='./Scripts/three.min.js'></script>
 		<script src='./Scripts/keyboard.js'></script>
-		<script src='./Scripts/game.js'></script>
-		<script src='./Scripts/form.js'></script>
-
+        <script src='./Scripts/form.js'></script>
+        <script src='./Scripts/physi.js'></script>
+        <script src='./Scripts/game.js'></script>
+        
 	</body>
 </html>

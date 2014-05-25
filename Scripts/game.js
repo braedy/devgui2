@@ -25,8 +25,8 @@ var angular_amount = 0;
 
 initScene = function() {
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize( 600, 300 );
+    renderer = new THREE.WebGLRenderer({ alpha:true, antialias: true });
+    renderer.setSize( 600, 400 );
     document.getElementById( 'gameCanvas' ).appendChild( renderer.domElement );
 
     scene = new Physijs.Scene;
@@ -37,7 +37,7 @@ initScene = function() {
         1,
         1000
     );
-    camera.position.set( 0, 360, 450 );
+    camera.position.set( 0, 250, 410 );
     //camera.position.set(200,500,0);
     //camera.position.set(360, 0, 0);
     camera.lookAt( scene.position );
@@ -314,14 +314,14 @@ function checkScore(){
 		//ballSpeed = 0;
 		// update display
 		document.getElementById("scores").innerHTML = "CPU wins!";
-		document.getElementById("info").innerHTML = "Refresh to play again or stay and practice";
+		document.getElementById("info").innerHTML = "Refresh to play again or stay and practice.";
 	}
 	else if(player_b >= maxScore){
 		// stop ball
 		//ballSpeed = 0;
 		// update display
 		document.getElementById("scores").innerHTML = "Player wins!";
-		document.getElementById("info").innerHTML = "Refresh to play again or stay and practice";
+		document.getElementById("info").innerHTML = "Refresh to play again or stay and practice.";
 	}
 }
 
