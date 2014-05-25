@@ -370,14 +370,14 @@ function addCube(len,wid,rot){//cubeWidth, cubeHeight, cubeRotation) {
     // create the cube
     cube = new Physijs.BoxMesh(
     new THREE.CubeGeometry(
-        40,//cubeWidth,
-        40+i,//cubeHeight,
+        wid,//cubeWidth,
+        len,//cubeHeight,
         cubeDepth),
     cubeMaterial, 0//mass
   );
 i+10;
     // rotate it
-    cube.rotation.y = 1;
+    cube.rotation.y = rot;
 
 cube.addEventListener( 'collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
 if(other_object._physijs.id == 4) {
@@ -390,10 +390,18 @@ if(other_object._physijs.id == 4) {
     cube.receiveShadow = true;
     cube.castShadow = true;
 
-    // place the cube somewhere random
-  cube.position.x = -40/*cubeWidth*/;
-  cube.position.y = 0/*cubeHeight*/;
-    cube.position.z = 0;
+
+   //place the cube somewhere random
+  //cube.position.x = -40/*cubeWidth*/;
+  //cube.position.y = 0/*cubeHeight*/;
+  //cube.position.z = 0;
+
+        // place the cube somewhere random
+    var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    cube.position.x = plusOrMinus * Math.random() * (fieldWidth - wid)/2;
+    plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+    cube.position.y = plusOrMinus * Math.random() * (fieldHeight - len)/2;
+    cube.position.z = cubeDepth;
 
 
 scene.add(cube);
