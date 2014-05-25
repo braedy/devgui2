@@ -4,6 +4,7 @@ var obstacleCanvasScene;
 var previewCube;
 
 function createObstacleCanvas(){
+    console.log("HEJ")
     // set the scene size
     var WIDTH = 300,
         HEIGHT = 150;
@@ -94,8 +95,8 @@ function drop(ev){
     var params = ev.dataTransfer.getData("params");
     params = JSON.parse(params);
     // add a new box to the scene
-    setLastCube(params.length, params.width, params.rotation);
-    addCube(lastCube);
+    //setLastCube(params.length, params.width, params.rotation);
+    addCube(params.length, params.width, params.rotation);
 
     // Set up an alert box to inform the player
     var alertBox = document.getElementById("alert");
