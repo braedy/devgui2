@@ -4,7 +4,6 @@ var obstacleCanvasScene;
 var previewCube;
 
 function createObstacleCanvas(){
-    console.log("HEJ")
     // set the scene size
     var WIDTH = 300,
         HEIGHT = 150;
@@ -95,7 +94,6 @@ function drop(ev){
     var params = ev.dataTransfer.getData("params");
     params = JSON.parse(params);
     // add a new box to the scene
-    //setLastCube(params.length, params.width, params.rotation);
     addCube(params.length, params.width, params.rotation);
 
     // Set up an alert box to inform the player
@@ -111,7 +109,7 @@ function drop(ev){
 }
 
 function undo() {
-    removeCube(lastCube);
+    undo_cube();
 
     // Set up an alert box to inform the player
     var alertBox = document.getElementById("alert");
@@ -124,7 +122,7 @@ function undo() {
 }
 
 function redo() {
-    addCube(lastCube);
+    redo_cube();
 
     // Set up an alert box to inform the player
     var alertBox = document.getElementById("alert");
@@ -134,37 +132,6 @@ function redo() {
         undo();
         return false;
     });
-}
-
-var lastCube;
-function setLastCube(cubeWidth, cubeHeight, cubeRotation) {
-
-    var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xCC0000, transparent: true, opacity: 0.5});
-    var cubeDepth = 10;
-
-    // create the cube
-    lastCube = new THREE.Mesh(
-    new THREE.CubeGeometry(
-        cubeWidth,
-        cubeHeight,
-        cubeDepth,
-        1,
-        1,
-        1),
-    cubeMaterial);
-
-    // rotate it
-    lastCube.rotation.z = cubeRotation;
-
-    lastCube.receiveShadow = true;
-    lastCube.castShadow = true;
-
-    // place the cube somewhere random
-    var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-    lastCube.position.x = plusOrMinus * Math.random() * (fieldWidth - cubeWidth)/2;
-    plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-    lastCube.position.y = plusOrMinus * Math.random() * (fieldHeight - cubeHeight)/2;
-    lastCube.position.z = cubeDepth;
 }
 
 $(document).foundation({

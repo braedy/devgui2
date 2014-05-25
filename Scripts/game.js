@@ -1,5 +1,5 @@
 // Scene
-var initScene, render, renderer, scene, camera, pointLight, spotLight;
+var initScene, render, renderer, scene, camera, pointLight, spotLight, lastCube;
 
 // field
 var fieldWidth = 400, fieldHeight = 200;
@@ -351,12 +351,8 @@ function ballMovement(){
 }
 
 /*============= DRAG AND DROP ===========*/
-function addCube(len,wid,rot){//cubeWidth, cubeHeight, cubeRotation) {
+function addCube(len, wid, rot){//cubeWidth, cubeHeight, cubeRotation) {
     // adds a cube (in a random position) to the playing field
-    console.log(len)
-    console.log(wid)
-    console.log(rot)
-
     var plane_fric = 0;
     var plane_rest = 1;
        // Materials
@@ -364,7 +360,7 @@ function addCube(len,wid,rot){//cubeWidth, cubeHeight, cubeRotation) {
                and the other parameter sets the restitution.*/
        // create surface material
         var cubeMaterial = Physijs.createMaterial(
-         new THREE.MeshLambertMaterial({color: 0xFFFCCC, transparent: true, opacity: 0.5}),plane_fric,plane_rest);
+         new THREE.MeshLambertMaterial({color: 0xCC0000, transparent: true, opacity: 0.5}),plane_fric,plane_rest);
     var cubeDepth = 40;
     var i = 1;
     // create the cube
@@ -375,7 +371,6 @@ function addCube(len,wid,rot){//cubeWidth, cubeHeight, cubeRotation) {
         cubeDepth),
     cubeMaterial, 0//mass
   );
-i+10;
     // rotate it
     cube.rotation.y = rot;
 
@@ -390,22 +385,25 @@ if(other_object._physijs.id == 4) {
     cube.receiveShadow = true;
     cube.castShadow = true;
 
-
-   //place the cube somewhere random
-  //cube.position.x = -40/*cubeWidth*/;
-  //cube.position.y = 0/*cubeHeight*/;
-  //cube.position.z = 0;
-
-        // place the cube somewhere random
+    // place the cube somewhere random
     var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-    cube.position.x = plusOrMinus * Math.random() * (fieldWidth - wid)/2;
+    cube.position.x = plusOrMinus * Math.random() * (fieldHeight - wid)/2;
     plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-    cube.position.y = plusOrMinus * Math.random() * (fieldHeight - len)/2;
-    cube.position.z = cubeDepth;
+    cube.position.z = plusOrMinus * Math.random() * (fieldWidth - len)/2;
+    cube.position.y = 0;
+    lastCube = cube;
 
 
 scene.add(cube);
-console.log("NEW OBJECT!")
+}
+
+function undo_cube(cube) {
+  if(lastCube)
+    scene.remove(lastCube);
+}
+
+function redo_cube(){
+  scene.add(lastCube);
 }
 
 //var start = false
