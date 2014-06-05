@@ -24,10 +24,16 @@
             </div>
         </div>
 
-        <div class='row'>
-
+        <div class='row' style='overflow: hidden; position: relative; width: 100%;'>
             <div id='alert' data-alert class="alert-box info round"style='display:none;'>
               Alert text.
+            </div>
+            <div id='glassPane' class='panel' style='color: white; opacity:0.9; z-index:9999; position:absolute; width: 100%;height: 100%;'>
+                <h3>Instructions:</h3>
+                <p>A - move left<br>D - move right</p>
+                <p id='winCondition'>First to 7 wins!</p>
+                <p id='info'></p>
+                <a class='button' id='removeTutorial' onclick='removeTutorial()'>Got it! Let's play!</a>
             </div>
             <div id='gameCanvas' ondrop='drop(event)' ondragover='allowDrop(event)' class="large-8 columns"></div>
             <div id='obstacleBuilder' class='large-4 columns'>
@@ -49,23 +55,8 @@
                     <span class="range-slider-active-segment"></span>
                 </div>
                 <br>
-            </div>
-        </div>
-
-        <div class='row'>
-            <div class='large-12 columns'>
-                <div class='panel'>
-                    <h3>Instructions:</h3>
-                    <div class='row'>
-                        <div class='large-6 columns'>
-                            <p>A - move left<br>D - move right</p>
-                        </div>
-                        <div class='large-6 columns'>
-                            <p id='winCondition'>First to 7 wins!</p>
-                            <p id='info'></p>
-                        </div>
-                    </div>
-                </div>
+                <div id='drop_image' ondrop='dropExternal(event)' ondragover='allowDrop(event)' class="panel"><p>Drag an image here from your computer for a custom scene background. 600 x 400 sized images works best.</p></div>
+                <br>
             </div>
         </div>
 
