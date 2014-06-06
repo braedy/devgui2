@@ -17,7 +17,7 @@ var player_a = 0, player_b = 0;
 var maxScore = 7;
 
 // speed of AI
-var difficulty = 0.10
+var difficulty = 0.087;
 
 //slow down effect on the ball
 var linear_amount = 0.9;
